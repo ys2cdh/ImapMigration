@@ -33,8 +33,8 @@ public class imapInput {
         return "imapInput";
     }
 
-    @GetMapping("/imapServerInput")
-    String imapServerInput(Model model)
+    @GetMapping("/imapSourceServerInput")
+    String imapSourceServerInput(Model model)
     {
 
         return "imapServerInput";
@@ -66,8 +66,8 @@ public class imapInput {
 
 
     @ResponseBody
-    @PostMapping("/inputImapSeverBackend")
-    String inputImapSeverBackend(@RequestParam(name = "ip") String strIP, @RequestParam(name = "port") String strPort)
+    @PostMapping("/inputImapSourceSeverBackend")
+    String inputImapSourceSeverBackend(@RequestParam(name = "ip") String strIP, @RequestParam(name = "port") String strPort)
     {
         System.out.println("IP :" + strIP + " port : " + strPort);
         JSONObject jobj = new JSONObject();

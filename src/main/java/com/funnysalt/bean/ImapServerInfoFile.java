@@ -1,10 +1,7 @@
 package com.funnysalt.bean;
 
-import org.springframework.context.annotation.Configuration;
-
 import java.io.*;
 
-@Configuration
 public class ImapServerInfoFile {
 
     private String imapServerIP;
