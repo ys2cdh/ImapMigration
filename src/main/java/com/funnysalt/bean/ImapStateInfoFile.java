@@ -38,4 +38,10 @@ public class ImapStateInfoFile {
     public Properties getProp() {
         return prop;
     }
+
+    public void save() throws IOException {
+        FileOutputStream fr = new FileOutputStream(filePath);
+        prop.store(fr, null);
+        fr.close();
+    }
 }
