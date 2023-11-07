@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<p>진행 중</p>
+<p th:text="${ing}"></p>
+<hr width=100% color=”block” noshade />
+<p>완료리스트</p>
+<ul th:each="complete : ${completes}">
+    <li th:text="${complete}"></li>
+</ul>
+</body>
+</html>
