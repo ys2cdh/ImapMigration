@@ -2,9 +2,7 @@ package com.funnysalt.bean;
 
 import org.springframework.context.annotation.Configuration;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import java.io.*;
 
 @Configuration
 public class ImapServerInfoFile {
@@ -13,8 +11,11 @@ public class ImapServerInfoFile {
     private int imapServerPort;
     private boolean bSSL=false;
 
+    private String filePath;
+
     public void init(String strFilePath){
 
+        filePath = strFilePath;
         File f = new File(strFilePath);
         if (f.exists() && 0 < f.length()) {
             readFile(f);
@@ -54,5 +55,20 @@ public class ImapServerInfoFile {
 
     public boolean getSSL() {
         return bSSL;
+    }
+
+    public void save(String strIP, String strPort) {
+        imapServerIP = strIP;
+        imapServerPort = Integer.parseInt(strPort);
+        if (993 == imapServerPort){
+            bSSL = true;
+        }
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
+            writer.write(strIP+ " " + strPort+ " " + bSSL);
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

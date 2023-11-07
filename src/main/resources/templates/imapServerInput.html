@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="css/style.css" type="text/css">
+
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<dev class="flex-container column">
+    <input id='serverIp' type='text'  />
+    <input id='serverPort' type='text' />
+    <button type="button" onclick="printName()" >클릭해 보세요!</button>
+<div id='result'></div>
+</dev>
+<script>
+    function printName()  {
+      const ip = document.getElementById('serverIp').value;
+      const port = document.getElementById('serverPort').value;
+      document.getElementById("result").innerText = name;
+
+      var httpRequest = new XMLHttpRequest();
+
+
+      httpRequest.onreadystatechange = () => {
+	    	/* readyState가 Done이고 응답 값이 200일 때, 받아온 response로 name과 age를 그려줌 */
+		    if (httpRequest.readyState === XMLHttpRequest.DONE) {
+			      if (httpRequest.status === 200) {
+			    	var result = httpRequest.response;
+			    	if ( '-1' == result.code ){
+			    	    alert("로그인에 실패 하였습니다. 계정 정보를 다시 확인 해 주시길 바랍니다.");
+			    	}else{
+			            alert(result.list);
+			        }
+			      } else {
+			        alert('Request Error!');
+			      }
+		    }
+	    };
+	    /* Get 방식으로 name 파라미터와 함께 요청 */
+	    httpRequest.open('POST', '/inputImapSeverBackend?ip=' + ip +'&port='+port);
+	    /* Response Type을 Json으로 사전 정의 */
+	    httpRequest.responseType = "json";
+	    /* 정의된 서버에 요청을 전송 */
+	    httpRequest.send();
+    }
+
+    function imapState(){
+    }
+</script>
+</body>
+</html>

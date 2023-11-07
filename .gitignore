@@ -35,3 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
+src/main/resources/imapServerInfo.dat
+src/main/resources/imapState.prop
+src/main/resources/userInfo.dat

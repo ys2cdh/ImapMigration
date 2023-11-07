@@ -33,6 +33,13 @@ public class imapInput {
         return "imapInput";
     }
 
+    @GetMapping("/imapServerInput")
+    String imapServerInput(Model model)
+    {
+
+        return "imapServerInput";
+    }
+
     @ResponseBody
     @PostMapping("/inputImapUserInfo")
     String inputImapUserInfo(@RequestParam(name = "userid") String strUserID, @RequestParam(name = "pw") String strPW)
@@ -54,6 +61,21 @@ public class imapInput {
 
         jobj.put("code","1");
         jobj.put("list",strList);
+        return jobj.toJSONString();
+    }
+
+
+    @ResponseBody
+    @PostMapping("/inputImapSeverBackend")
+    String inputImapSeverBackend(@RequestParam(name = "ip") String strIP, @RequestParam(name = "port") String strPort)
+    {
+        System.out.println("IP :" + strIP + " port : " + strPort);
+        JSONObject jobj = new JSONObject();
+
+        imapServerInfoFile.save(strIP,strPort);
+
+        jobj.put("code","1");
+
         return jobj.toJSONString();
     }
 }
