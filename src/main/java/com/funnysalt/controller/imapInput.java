@@ -1,6 +1,8 @@
 package com.funnysalt.controller;
 
-import com.funnysalt.bean.ImapServerInfoFile;
+import com.funnysalt.bean.ImapSouceServerInfoFile;
+import com.funnysalt.bean.ImapTargetServerInfoFile;
+import com.funnysalt.info.ImapServerInfoFile;
 import com.funnysalt.bean.UserInfoFile;
 import com.funnysalt.service.ImapTest;
 import org.json.simple.JSONObject;
@@ -16,7 +18,10 @@ public class imapInput {
     private UserInfoFile userInfoFile;
 
     @Autowired
-    private ImapServerInfoFile imapServerInfoFile;
+    private ImapSouceServerInfoFile imapSouceServerInfoFile;
+
+    @Autowired
+    private ImapTargetServerInfoFile imapTargetServerInfoFile;
 
     @GetMapping("/")
     String home(Model model)
@@ -47,7 +52,7 @@ public class imapInput {
         System.out.println("user :" + strUserID + " pw : " + strPW);
         JSONObject jobj = new JSONObject();
 
-        ImapTest imapTest = new ImapTest(imapServerInfoFile.getImapServerIP(),imapServerInfoFile.getImapServerPort(),imapServerInfoFile.getSSL(),strUserID,strPW);
+        ImapTest imapTest = new ImapTest(imapSouceServerInfoFile.getImapServerIP(),imapSouceServerInfoFile.getImapServerPort(),imapSouceServerInfoFile.getSSL(),strUserID,strPW);
         //로그인 실패시 return
         if (!imapTest.checkAuth()){
             jobj.put("code","-1");
@@ -72,7 +77,7 @@ public class imapInput {
         System.out.println("IP :" + strIP + " port : " + strPort);
         JSONObject jobj = new JSONObject();
 
-        imapServerInfoFile.save(strIP,strPort);
+        imapSouceServerInfoFile.save(strIP,strPort);
 
         jobj.put("code","1");
 

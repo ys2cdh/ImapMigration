@@ -21,7 +21,10 @@ public class MyApplicationRunner implements ApplicationListener<ContextRefreshed
     private UserInfoFile userInfoFile;
 
     @Autowired
-    private ImapServerInfoConfig imapServerInfoConfig;
+    private ImapSouceServerInfoFile imapSouceServerInfoFile;
+
+    @Autowired
+    private ImapTargetServerInfoFile imapTargetServerInfoFile;
 
     @Autowired
     private ImapStateInfoFile imapStateInfoFile;
@@ -45,8 +48,8 @@ public class MyApplicationRunner implements ApplicationListener<ContextRefreshed
             String UserInfo = rootPath+"/userInfo.dat";
             String imapState = rootPath+"/imapState.prop";
 
-            imapServerInfoConfig.ImapSouceServerInfoFile(imapSourceServerInfo);
-            imapServerInfoConfig.ImapTargetServerInfoFile(imapTargetServerInfo);
+            imapSouceServerInfoFile.init(imapSourceServerInfo);
+            imapTargetServerInfoFile.init(imapTargetServerInfo);
             userInfoFile.init(UserInfo);
             imapStateInfoFile.init(imapState);
         } catch (IOException e) {

@@ -1,4 +1,4 @@
-package com.funnysalt.bean;
+package com.funnysalt.info;
 
 import java.io.*;
 
