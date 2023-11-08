@@ -38,8 +38,8 @@ public class imapInput {
         return "imapInput";
     }
 
-    @GetMapping("/imapSourceServerInput")
-    String imapSourceServerInput(Model model)
+    @GetMapping("/imapServerInput")
+    String imapServerInput(Model model)
     {
 
         return "imapServerInput";

@@ -38,7 +38,7 @@ public class UserInfoFile {
         BufferedWriter writer=null;
         try {
             pw = new AES256().encrypt(pw);
-            String value = email + " " + pw + " 0 0";
+            String value = email + " " + pw + " 0 0"; // id  , pw , 전체 메일 수 , 다운로드한 메일 수 , 업로드한 메일 수
             mapUserInfo.put(email,value);
 
             writer = new BufferedWriter(new FileWriter(userInfoFile));

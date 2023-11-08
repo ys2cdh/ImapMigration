@@ -8,16 +8,32 @@
 </head>
 <body>
 <dev class="flex-container column">
-    <input id='serverIp' type='text'  />
-    <input id='serverPort' type='text' />
+    <div class="row">
+    <label> Source IP</label> <input id='sourceServerIp' type='text'  />
+    </div>
+    <div class="row">
+    <label> Source Port</label> <input id='sourceServerPort' type='text' />
+    </div>
+    <div class="row">
+    <label> Target IP</label> <input id='targetServerIp' type='text'  />
+    </div>
+    <div class="row">
+    <label> Target Port </label><input id='targetServerPort' type='text' />
+    </div>
+    <div class="row">
+    <label> Download fodler </label><input id='downloadPath' type='text' />
+    </div>
     <button type="button" onclick="printName()" >클릭해 보세요!</button>
 <div id='result'></div>
 </dev>
 <script>
     function printName()  {
-      const ip = document.getElementById('serverIp').value;
-      const port = document.getElementById('serverPort').value;
-      document.getElementById("result").innerText = name;
+      const sourceIP = document.getElementById('sourceServerIp').value;
+      const sourcePort = document.getElementById('sourceServerPort').value;
+
+      const targetIP = document.getElementById('targetServerIp').value;
+      const targetPort = document.getElementById('targetServerPort').value;
+
 
       var httpRequest = new XMLHttpRequest();
 
@@ -38,7 +54,7 @@
 		    }
 	    };
 	    /* Get 방식으로 name 파라미터와 함께 요청 */
-	    httpRequest.open('POST', '/inputImapSourceSeverBackend?ip=' + ip +'&port='+port);
+	    httpRequest.open('POST', '/inputImapSourceSeverBackend?ip=' + sourceIP +'&port='+sourcePort);
 	    /* Response Type을 Json으로 사전 정의 */
 	    httpRequest.responseType = "json";
 	    /* 정의된 서버에 요청을 전송 */

@@ -9,6 +9,8 @@ public class ImapTest {
     ImapWork imapWork;
     String strTwoDepthList="";
     boolean bAuth=false;
+    //전체 메일 카운트
+    long nTotalEmlCount = 0;
 
     public ImapTest(String serverIP,int port,boolean ssl,String id,String pw){
         imapWork = new ImapWork();
@@ -25,7 +27,7 @@ public class ImapTest {
                 if (3 <= box.split("/").length){
                     strTwoDepthList += UTF7Coder.d(box) + " , ";
                 }
-                imapWork.getBoxMailCount(box);
+                nTotalEmlCount += imapWork.getBoxMailCount(box);
             }
 //            System.out.println(imapWork.listSync());
 
@@ -48,4 +50,6 @@ public class ImapTest {
     public String getTwoDepthList() {
         return strTwoDepthList;
     }
+
+    public long getTotalEmlCount(){ return nTotalEmlCount;}
 }
