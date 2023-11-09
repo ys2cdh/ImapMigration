@@ -48,6 +48,7 @@ public class MyApplicationRunner implements ApplicationListener<ContextRefreshed
             String UserInfo = rootPath+"/userInfo.dat";
             String imapState = rootPath+"/imapState.prop";
 
+
             imapSouceServerInfoFile.init(imapSourceServerInfo);
             imapTargetServerInfoFile.init(imapTargetServerInfo);
             userInfoFile.init(UserInfo);

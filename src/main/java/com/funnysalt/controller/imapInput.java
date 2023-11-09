@@ -83,4 +83,18 @@ public class imapInput {
 
         return jobj.toJSONString();
     }
+
+    @ResponseBody
+    @PostMapping("/inputDownloadPath")
+    String inputDownloadPath(@RequestParam(name = "path") String strDownloadPath)
+    {
+        System.out.println("DownloadPath :" + strDownloadPath);
+        JSONObject jobj = new JSONObject();
+
+//        imapSouceServerInfoFile.save(strIP,strPort);
+
+        jobj.put("code","1");
+
+        return jobj.toJSONString();
+    }
 }
