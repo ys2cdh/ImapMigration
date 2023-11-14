@@ -4,9 +4,9 @@ import java.io.*;
 
 public class ImapServerInfoFile {
 
-    private String imapServerIP;
-    private int imapServerPort;
-    private boolean bSSL=false;
+    protected String imapServerIP;
+    protected int imapServerPort;
+    protected boolean bSSL=false;
 
     private String filePath;
 

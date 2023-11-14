@@ -40,7 +40,9 @@ public class ImapmigrationApplication {
 				try {
 					statement.addBatch(getCreateSql1());
 					statement.addBatch(getCreateSql2());
+					statement.addBatch(insertIMAP_SERVER_INFO());
 					statement.addBatch(getCreateSql3());
+					statement.addBatch(insertIMAP_MIGRATION_STATE());
 					statement.executeBatch();
 				} catch (SQLException e) {
 					e.printStackTrace();
@@ -86,6 +88,15 @@ public class ImapmigrationApplication {
 		return strSql;
 	}
 
+
+	private static String insertIMAP_SERVER_INFO() {
+		//하나의 row만 가질 수 있다;
+		String strSql = "INSERT INTO IMAP_SERVER_INFO VALUES('',0,'',0)";
+		return strSql;
+	}
+
+
+
 	private static String getCreateSql3() {
 				//하나의 row만 가질 수 있다
 		String strSql ="CREATE TABLE IMAP_MIGRATION_STATE (\n" +
@@ -95,6 +106,12 @@ public class ImapmigrationApplication {
 				"\tcurrent_email LONG VARCHAR," +// COMMENT '마이그레이션 중인 이메일 주소',\n" +
 				"\tend_email LONG VARCHAR" +// COMMENT '마이그레이션 완료 이메일 주소'\n" +
 				")";
+		return strSql;
+	}
+
+	private static String insertIMAP_MIGRATION_STATE() {
+		//하나의 row만 가질 수 있다;
+		String strSql = "INSERT INTO IMAP_MIGRATION_STATE VALUES(0,0,0,'','')";
 		return strSql;
 	}
 
