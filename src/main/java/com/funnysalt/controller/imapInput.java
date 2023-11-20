@@ -1,6 +1,7 @@
 package com.funnysalt.controller;
 
 import com.funnysalt.bean.ImapSouceServerInfoFile;
+import com.funnysalt.bean.ImapStateInfoFile;
 import com.funnysalt.bean.ImapTargetServerInfoFile;
 import com.funnysalt.info.ImapServerInfoFile;
 import com.funnysalt.bean.UserInfoFile;
@@ -22,6 +23,9 @@ public class imapInput {
 
     @Autowired
     private ImapTargetServerInfoFile imapTargetServerInfoFile;
+
+    @Autowired
+    private ImapStateInfoFile imapStateInfoFile;
 
     @GetMapping("/")
     String home(Model model)
@@ -46,7 +50,7 @@ public class imapInput {
     }
 
     @ResponseBody
-    @PostMapping("/inputImapUserInfo")
+    @PostMapping("/inputSourceImapUserInfo")
     String inputImapUserInfo(@RequestParam(name = "userid") String strUserID, @RequestParam(name = "pw") String strPW)
     {
         System.out.println("user :" + strUserID + " pw : " + strPW);
@@ -85,12 +89,27 @@ public class imapInput {
     }
 
     @ResponseBody
+    @PostMapping("/inputImapTargetSeverBackend")
+    String inputImapTargetSeverBackend(@RequestParam(name = "ip") String strIP, @RequestParam(name = "port") String strPort)
+    {
+        System.out.println("IP :" + strIP + " port : " + strPort);
+        JSONObject jobj = new JSONObject();
+
+        imapTargetServerInfoFile.save(strIP,strPort);
+
+        jobj.put("code","1");
+
+        return jobj.toJSONString();
+    }
+
+    @ResponseBody
     @PostMapping("/inputDownloadPath")
     String inputDownloadPath(@RequestParam(name = "path") String strDownloadPath)
     {
         System.out.println("DownloadPath :" + strDownloadPath);
         JSONObject jobj = new JSONObject();
 
+        imapStateInfoFile.savePath(strDownloadPath);
 //        imapSouceServerInfoFile.save(strIP,strPort);
 
         jobj.put("code","1");

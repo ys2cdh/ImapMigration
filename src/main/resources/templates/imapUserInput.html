@@ -8,15 +8,15 @@
 </head>
 <body>
 <dev class="flex-container column">
-    <input id='userid' type='text'  />
-    <input id='pwd' type='password' />
+    <input id='sourceUserId' type='text'  />
+    <input id='sourcePwd' type='password' />
     <button type="button" onclick="printName()" >클릭해 보세요!</button>
 <div id='result'></div>
 </dev>
 <script>
     function printName()  {
-      const userid = document.getElementById('userid').value;
-      const pw = document.getElementById('pwd').value;
+      const sourceUserId = document.getElementById('sourceUserId').value;
+      const sourcePwd = document.getElementById('sourcePwd').value;
       document.getElementById("result").innerText = name;
 
       var httpRequest = new XMLHttpRequest();
@@ -38,7 +38,7 @@
 		    }
 	    };
 	    /* Get 방식으로 name 파라미터와 함께 요청 */
-	    httpRequest.open('POST', '/inputImapUserInfo?userid=' + userid+'&pw='+pw);
+	    httpRequest.open('POST', '/inputSourceImapUserInfo?userid=' + sourceUserId+'&pw='+sourcePwd);
 	    /* Response Type을 Json으로 사전 정의 */
 	    httpRequest.responseType = "json";
 	    /* 정의된 서버에 요청을 전송 */

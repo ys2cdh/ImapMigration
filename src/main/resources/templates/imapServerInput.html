@@ -1,67 +1,158 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
-    <link rel="stylesheet" href="css/style.css" type="text/css">
-
     <meta charset="UTF-8">
     <title>Title</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column;
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .row {
+            display: flex;
+            align-items: center; /* 추가된 부분 */
+            margin-bottom: 10px;
+        }
+
+        label {
+            margin-right: 10px; /* 추가된 부분 */
+        }
+
+        input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            margin-top: 10px; /* 수정된 부분 */
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #result {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+    </style>
 </head>
+<link rel="shortcut icon" href="#">
 <body>
-<dev class="flex-container column">
+<div class="column">
     <div class="row">
-    <label> Source IP</label> <input id='sourceServerIp' type='text'  />
+        <label>Source IP</label> <input id='sourceServerIp' type='text' />
     </div>
     <div class="row">
-    <label> Source Port</label> <input id='sourceServerPort' type='text' />
+        <label>Source Port</label> <input id='sourceServerPort' type='text' />
     </div>
     <div class="row">
-    <label> Target IP</label> <input id='targetServerIp' type='text'  />
+        <label>Target IP</label> <input id='targetServerIp' type='text' />
     </div>
     <div class="row">
-    <label> Target Port </label><input id='targetServerPort' type='text' />
+        <label>Target Port</label><input id='targetServerPort' type='text' />
     </div>
     <div class="row">
-    <label> Download fodler </label><input id='downloadPath' type='text' />
+        <label>Download folder</label><input id='downloadPath' type='text' />
     </div>
-    <button type="button" onclick="printName()" >클릭해 보세요!</button>
-<div id='result'></div>
-</dev>
+    <button type="button" onclick="printName()">클릭해 보세요!</button>
+    <div id='result'></div>
+</div>
+</body>
 <script>
-    function printName()  {
-      const sourceIP = document.getElementById('sourceServerIp').value;
-      const sourcePort = document.getElementById('sourceServerPort').value;
 
-      const targetIP = document.getElementById('targetServerIp').value;
-      const targetPort = document.getElementById('targetServerPort').value;
+    // 페이지 초기화
+    document.addEventListener("DOMContentLoaded", function(){
+
+        fetch('/getServerInfo', {
+                method: "GET",
+                mode: "cors",
+                cache: "no-cache",
+                credentials: "same-origin",
+                redirect: "follow",
+                referrerPolicy: "no-referrer"
+        }).then(response =>
+            response.json().then(data => ({
+                data: data,
+                status: response.status
+            }))
+        ).then(res => {
+            console.log( res.data);
+        });
 
 
-      var httpRequest = new XMLHttpRequest();
+
+    });
 
 
-      httpRequest.onreadystatechange = () => {
-	    	/* readyState가 Done이고 응답 값이 200일 때, 받아온 response로 name과 age를 그려줌 */
-		    if (httpRequest.readyState === XMLHttpRequest.DONE) {
-			      if (httpRequest.status === 200) {
-			    	var result = httpRequest.response;
-			    	if ( '-1' == result.code ){
-			    	    alert("로그인에 실패 하였습니다. 계정 정보를 다시 확인 해 주시길 바랍니다.");
-			    	}else{
-			            alert(result.list);
-			        }
-			      } else {
-			        alert('Request Error!');
-			      }
-		    }
-	    };
-	    /* Get 방식으로 name 파라미터와 함께 요청 */
-	    httpRequest.open('POST', '/inputImapSourceSeverBackend?ip=' + sourceIP +'&port='+sourcePort);
-	    /* Response Type을 Json으로 사전 정의 */
-	    httpRequest.responseType = "json";
-	    /* 정의된 서버에 요청을 전송 */
-	    httpRequest.send();
+
+    async function printName() {
+        const sourceIP = document.getElementById('sourceServerIp').value;
+        const sourcePort = document.getElementById('sourceServerPort').value;
+        const targetIP = document.getElementById('targetServerIp').value;
+        const targetPort = document.getElementById('targetServerPort').value;
+        const downloadPath = document.getElementById('downloadPath').value;
+
+        await postData('/inputImapSourceSeverBackend?ip=' + sourceIP + '&port=' + sourcePort, {});
+        await postData('/inputImapTargetSeverBackend?ip=' + targetIP + '&port=' + targetPort, {});
+        await postData('/inputDownloadPath?path=' + downloadPath, {});
     }
 
-    function imapState(){
+    async function postData(url = "", data = {}) {
+        // 선택: URL에 특수 문자가 포함되어 있으면 encodeURI 사용
+        url = encodeURI(url);
+
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                mode: "cors",
+                cache: "no-cache",
+                credentials: "same-origin",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                redirect: "follow",
+                referrerPolicy: "no-referrer",
+                body: JSON.stringify(data),
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            console.log(result);
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    function imapState() {
+        // 이 함수의 내용을 추가해야 합니다.
     }
 </script>
 </body>

@@ -21,23 +21,23 @@ public class imapState {
     String imapState(Model model)
     {
         model.addAttribute("ing","");
-        Properties properties = imapStateInfoFile.getProp();
-        if (null != properties && properties.containsKey("ing...")){
-            model.addAttribute("ing",properties.get("ing..."));
-        }
+//        Properties properties = imapStateInfoFile.getProp();
+//        if (null != properties && properties.containsKey("ing...")){
+//            model.addAttribute("ing",properties.get("ing..."));
+//        }
+//
+//        ArrayList<String> aryList = new ArrayList<String>();
+//        Enumeration em = properties.keys();
+//        while(em.hasMoreElements()){
+//            String str = (String)em.nextElement();
+//            if (str.equals("ing...")){
+//                continue;
+//            }
+//            aryList.add(str + ": " + properties.get(str));
+////            System.out.println(str + ": " + properties.get(str));
+//        }
 
-        ArrayList<String> aryList = new ArrayList<String>();
-        Enumeration em = properties.keys();
-        while(em.hasMoreElements()){
-            String str = (String)em.nextElement();
-            if (str.equals("ing...")){
-                continue;
-            }
-            aryList.add(str + ": " + properties.get(str));
-//            System.out.println(str + ": " + properties.get(str));
-        }
-
-        model.addAttribute("completes",aryList);
+//        model.addAttribute("completes",aryList);
 
         return "imapState";
     }

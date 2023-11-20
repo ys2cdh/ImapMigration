@@ -104,14 +104,15 @@ public class ImapmigrationApplication {
 				"\ttotal_download_eml_count BIGINT," +// COMMENT '전체 다운로드 한 원문 카운트',\n" +
 				"\ttotal_up_eml_count BIGINT," +// COMMENT '전체 업로드한  한 원문 카운트',\n" +
 				"\tcurrent_email LONG VARCHAR," +// COMMENT '마이그레이션 중인 이메일 주소',\n" +
-				"\tend_email LONG VARCHAR" +// COMMENT '마이그레이션 완료 이메일 주소'\n" +
+				"\tend_email LONG VARCHAR," +// COMMENT '마이그레이션 완료 이메일 주소'\n" +
+				"\tdownload_path varchar(512)" +// COMMENT '원문 다운로드 폴더 위치',\n" +
 				")";
 		return strSql;
 	}
 
 	private static String insertIMAP_MIGRATION_STATE() {
 		//하나의 row만 가질 수 있다;
-		String strSql = "INSERT INTO IMAP_MIGRATION_STATE VALUES(0,0,0,'','')";
+		String strSql = "INSERT INTO IMAP_MIGRATION_STATE VALUES(0,0,0,'','','')";
 		return strSql;
 	}
 

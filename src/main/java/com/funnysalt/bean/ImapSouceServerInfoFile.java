@@ -42,6 +42,9 @@ public class ImapSouceServerInfoFile extends ImapServerInfoFile {
         Statement statement = null;
         ResultSet resultSet = null;
 
+        imapServerIP=strIP;
+        imapServerPort=Integer.parseInt(strPort);
+
         try {
             con = DriverManager.getConnection("jdbc:derby:/home/imapMigration;create=true");
             con.setAutoCommit(true);
@@ -49,7 +52,7 @@ public class ImapSouceServerInfoFile extends ImapServerInfoFile {
             // statement 객체 생성
             statement = con.createStatement();
             // RDB와 통신
-            statement.executeQuery("UPDATE IMAP_SERVER_INFO SET source_imap_IP='"+strIP+"', source_imap_port='"+strPort+"'");
+            statement.executeUpdate("UPDATE IMAP_SERVER_INFO SET source_imap_IP='"+strIP+"', source_imap_port="+strPort);
 
 
         } catch (SQLException se) {

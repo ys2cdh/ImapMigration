@@ -49,10 +49,12 @@ public class MyApplicationRunner implements ApplicationListener<ContextRefreshed
             String imapState = rootPath+"/imapState.prop";
 
 
-            imapSouceServerInfoFile.init(imapSourceServerInfo);
-            imapTargetServerInfoFile.init(imapTargetServerInfo);
+//            imapSouceServerInfoFile.init(imapSourceServerInfo);
+//            imapTargetServerInfoFile.init(imapTargetServerInfo);
+            imapSouceServerInfoFile.read();
+            imapTargetServerInfoFile.read();
             userInfoFile.init(UserInfo);
-            imapStateInfoFile.init(imapState);
+            imapStateInfoFile.read();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

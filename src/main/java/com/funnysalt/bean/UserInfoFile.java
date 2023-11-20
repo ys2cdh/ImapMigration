@@ -6,13 +6,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.i18n.SimpleTimeZoneAwareLocaleContext;
+import org.springframework.stereotype.Component;
 
 import java.io.*;
+import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
 
 //키 값은 이메일 주소
-@Configuration
+@Component
 public class UserInfoFile {
 
     private HashMap<String,String> mapUserInfo = new HashMap<String,String>();
@@ -28,6 +30,34 @@ public class UserInfoFile {
 
     public HashMap<String, String> getMapUserInfo() {
         return mapUserInfo;
+    }
+
+    public synchronized void addUSourceUserInfo(String email,String pw){
+        if (mapUserInfo.containsKey(email)){
+            return;
+        }
+
+        Connection con = null ;
+        Statement statement = null;
+        ResultSet resultSet = null;
+
+        try {
+            con = DriverManager.getConnection("jdbc:derby:/home/imapMigration;create=true");
+            con.setAutoCommit(true);
+
+            // statement 객체 생성
+            statement = con.createStatement();
+            // RDB와 통신
+            statement.executeUpdate("UPDATE EMAIL_USER SET source_email='"+email+"', source_pw="+pw);
+
+
+        } catch (SQLException se) {
+            se.printStackTrace();
+        }finally {
+            if(resultSet != null){try{resultSet.close() ;} catch(SQLException se){}	}
+            if(statement != null){try{statement.close() ;} catch(SQLException se){}}
+            if(con != null){try{con.close() ;} catch(SQLException se){}}
+        }
     }
 
     public synchronized void addUserInfo(String email,String pw){
