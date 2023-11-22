@@ -53,7 +53,8 @@ public class MyApplicationRunner implements ApplicationListener<ContextRefreshed
 //            imapTargetServerInfoFile.init(imapTargetServerInfo);
             imapSouceServerInfoFile.read();
             imapTargetServerInfoFile.read();
-            userInfoFile.init(UserInfo);
+            userInfoFile.read();
+//            userInfoFile.init(UserInfo);
             imapStateInfoFile.read();
         } catch (IOException e) {
             throw new RuntimeException(e);

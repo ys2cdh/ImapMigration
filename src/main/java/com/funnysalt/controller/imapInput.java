@@ -3,7 +3,6 @@ package com.funnysalt.controller;
 import com.funnysalt.bean.ImapSouceServerInfoFile;
 import com.funnysalt.bean.ImapStateInfoFile;
 import com.funnysalt.bean.ImapTargetServerInfoFile;
-import com.funnysalt.info.ImapServerInfoFile;
 import com.funnysalt.bean.UserInfoFile;
 import com.funnysalt.service.ImapTest;
 import org.json.simple.JSONObject;
@@ -35,11 +34,11 @@ public class imapInput {
     }
 
 
-    @GetMapping("/imapInput")
+    @GetMapping("/imapUserInput")
     String imapInput(Model model)
     {
 
-        return "imapInput";
+        return "imapUserInput";
     }
 
     @GetMapping("/imapServerInput")
@@ -65,7 +64,31 @@ public class imapInput {
 
         String strList = imapTest.getTwoDepthList();
         if (strList.isEmpty()){
-            userInfoFile.addUserInfo(strUserID,strPW);
+            userInfoFile.addSourceUserInfo(strUserID,strPW,imapTest.getTotalEmlCount());
+        }
+
+        jobj.put("code","1");
+        jobj.put("list",strList);
+        return jobj.toJSONString();
+    }
+
+    @ResponseBody
+    @PostMapping("/inputTargetImapUserInfo")
+    String inputTargetImapUserInfo(@RequestParam(name = "sourceUserid") String strSourceUserid ,@RequestParam(name = "userid") String strUserID, @RequestParam(name = "pw") String strPW)
+    {
+        System.out.println("user :" + strUserID + " pw : " + strPW);
+        JSONObject jobj = new JSONObject();
+
+        ImapTest imapTest = new ImapTest(imapTargetServerInfoFile.getImapServerIP(),imapTargetServerInfoFile.getImapServerPort(),imapTargetServerInfoFile.getSSL(),strUserID,strPW);
+        //로그인 실패시 return
+        if (!imapTest.checkAuth()){
+            jobj.put("code","-1");
+            return jobj.toJSONString();
+        }
+
+        String strList = imapTest.getTwoDepthList();
+        if (strList.isEmpty()){
+            userInfoFile.addTargetUserInfo(strSourceUserid,strUserID,strPW);
         }
 
         jobj.put("code","1");

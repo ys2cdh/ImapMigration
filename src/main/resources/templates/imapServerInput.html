@@ -83,6 +83,7 @@
     <div id='result'></div>
 </div>
 </body>
+<script src="../js/httpSendData.js"></script>
 <script>
 
     // 페이지 초기화
@@ -102,6 +103,12 @@
             }))
         ).then(res => {
             console.log( res.data);
+
+            document.getElementById('sourceServerIp').value = res.data.sourceIP;
+            document.getElementById('sourceServerPort').value = res.data.sourcePort;
+            document.getElementById('targetServerIp').value = res.data.targetIP;
+            document.getElementById('targetServerPort').value = res.data.targetPort;
+            document.getElementById('downloadPath').value = res.data.downloadPath;
         });
 
 
@@ -122,34 +129,7 @@
         await postData('/inputDownloadPath?path=' + downloadPath, {});
     }
 
-    async function postData(url = "", data = {}) {
-        // 선택: URL에 특수 문자가 포함되어 있으면 encodeURI 사용
-        url = encodeURI(url);
 
-        try {
-            const response = await fetch(url, {
-                method: "POST",
-                mode: "cors",
-                cache: "no-cache",
-                credentials: "same-origin",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                redirect: "follow",
-                referrerPolicy: "no-referrer",
-                body: JSON.stringify(data),
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-
-            const result = await response.json();
-            console.log(result);
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    }
 
     function imapState() {
         // 이 함수의 내용을 추가해야 합니다.

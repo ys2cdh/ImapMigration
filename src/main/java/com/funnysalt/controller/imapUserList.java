@@ -21,7 +21,7 @@ public class imapUserList {
 
         ArrayList<String> aryList = new ArrayList<String>();
 
-       Iterator<String> keys = userInfoFile.getMapUserInfo().keySet().iterator();
+       Iterator<String> keys = userInfoFile.getSourceMapUserInfo().keySet().iterator();
        while (keys.hasNext()){
             aryList.add(keys.next());
         }

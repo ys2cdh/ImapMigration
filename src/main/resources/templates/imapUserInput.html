@@ -7,42 +7,40 @@
     <title>Title</title>
 </head>
 <body>
-<dev class="flex-container column">
-    <input id='sourceUserId' type='text'  />
-    <input id='sourcePwd' type='password' />
-    <button type="button" onclick="printName()" >클릭해 보세요!</button>
-<div id='result'></div>
+<div class="column">
+    <div class="row">
+        <label>Source ID</label> <input id='sourceUserId' type='text' />
+    </div>
+    <div class="row">
+        <label>Source PW</label> <input id='sourceUserPwd' type='password' />
+    </div>
+    <div class="row">
+        <label>Target ID</label> <input id='targetUserId' type='text' />
+    </div>
+    <div class="row">
+        <label>Target PW</label><input id='targetUserPwd' type='password' />
+    </div>
+    <button type="button" onclick="printName()">클릭해 보세요!</button>
+    <div id='result'></div>
+</div>
+
+
 </dev>
+<script src="../js/httpSendData.js"></script>
 <script>
-    function printName()  {
+    async function printName()  {
       const sourceUserId = document.getElementById('sourceUserId').value;
-      const sourcePwd = document.getElementById('sourcePwd').value;
-      document.getElementById("result").innerText = name;
+      const sourcePwd = document.getElementById('sourceUserPwd').value;
 
-      var httpRequest = new XMLHttpRequest();
+      const targetUserId = document.getElementById('targetUserId').value;
+      const targetPwd = document.getElementById('targetUserPwd').value;
 
+        //사용자 암호는 암호화 필요
+        await postData('/inputSourceImapUserInfo?userid=' + sourceUserId + '&pw=' + sourcePwd, {});
 
-      httpRequest.onreadystatechange = () => {
-	    	/* readyState가 Done이고 응답 값이 200일 때, 받아온 response로 name과 age를 그려줌 */
-		    if (httpRequest.readyState === XMLHttpRequest.DONE) {
-			      if (httpRequest.status === 200) {
-			    	var result = httpRequest.response;
-			    	if ( '-1' == result.code ){
-			    	    alert("로그인에 실패 하였습니다. 계정 정보를 다시 확인 해 주시길 바랍니다.");
-			    	}else{
-			            alert(result.list);
-			        }
-			      } else {
-			        alert('Request Error!');
-			      }
-		    }
-	    };
-	    /* Get 방식으로 name 파라미터와 함께 요청 */
-	    httpRequest.open('POST', '/inputSourceImapUserInfo?userid=' + sourceUserId+'&pw='+sourcePwd);
-	    /* Response Type을 Json으로 사전 정의 */
-	    httpRequest.responseType = "json";
-	    /* 정의된 서버에 요청을 전송 */
-	    httpRequest.send();
+        //사용자 암호는 암호화 필요
+        await postData('/inputTargetImapUserInfo?sourceUserid='+sourceUserId + '&userid=' + targetUserId + '&pw=' + targetPwd, {});
+
     }
 
     function imapState(){
