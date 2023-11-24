@@ -1,14 +1,13 @@
 package com.funnysalt.bean;
 
+import com.funnysalt.service.ImapMBoxSync;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
 import java.io.IOException;
 
 @Component
@@ -56,6 +55,9 @@ public class MyApplicationRunner implements ApplicationListener<ContextRefreshed
             userInfoFile.read();
 //            userInfoFile.init(UserInfo);
             imapStateInfoFile.read();
+
+            //test
+            ImapMBoxSync imapMBoxSync = new ImapMBoxSync("ys2cdh@smart-m.co.kr");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

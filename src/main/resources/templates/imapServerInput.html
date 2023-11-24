@@ -124,7 +124,7 @@
         const targetPort = document.getElementById('targetServerPort').value;
         const downloadPath = document.getElementById('downloadPath').value;
 
-        await postData('/inputImapSourceSeverBackend?ip=' + sourceIP + '&port=' + sourcePort, {});
+        await postData('/inputImapSourceSeverBackend?ip=' + sourceIP + '&port=' + sourcePort , {});
         await postData('/inputImapTargetSeverBackend?ip=' + targetIP + '&port=' + targetPort, {});
         await postData('/inputDownloadPath?path=' + downloadPath, {});
     }

@@ -190,8 +190,37 @@ public class ImapWork {
 		return exitCount;
 	}
 
+	public int crateMBox(String boxName) throws Exception{
+		String strTemp;
+		StreamUtil.writeString(out, nCommondIndex + " CREATE \"" + boxName + "\"\r\n");
+		while (true)
+		{
+			strTemp = StreamUtil.readLineString(in);
+//System.out.println(strTemp);
+			if (strTemp.startsWith("*") )
+			{
+				System.out.println(strTemp);
 
-    public static class FakeX509TrustManager implements X509TrustManager
+			}
+			else if (nCommondIndex == Integer.parseInt(strTemp.split(" ")[0]))
+			{
+				nCommondIndex++;
+				if (-1 >= strTemp.toUpperCase().indexOf("OK"))
+				{
+					return -1;
+				}
+				break;
+			}
+			else
+			{
+				return -1;
+			}
+		}
+		return 1;
+	}
+
+
+	public static class FakeX509TrustManager implements X509TrustManager
 	{
 	    public boolean isClientTrusted(java.security.cert.X509Certificate[] chain)
 	    {

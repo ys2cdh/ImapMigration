@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 
 import java.sql.*;
 
-@Component
+@Component(value="ImapTargetServerInfoFile")
 public class ImapTargetServerInfoFile extends ImapServerInfoFile {
 
     public void read(){

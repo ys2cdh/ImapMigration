@@ -49,13 +49,12 @@ public class UserInfoFile {
 
             // statement 객체 생성
             statement = con.createStatement();
-
-            if ( false == statement.execute("SELECT * FROM EMAIL_USER where source_email='"+email+"'")) {
-
-                // RDB와 통신
-                statement.executeUpdate("INSERT INTO EMAIL_USER (source_email,source_pw,total_eml_count) values ('" + email + "','" + pw+ "',"+ nTotalCount+ ")");
-            } else {
+            resultSet = statement.executeQuery("SELECT * FROM EMAIL_USER where source_email='"+email+"'");
+            if ( resultSet.next() ) {
                 statement.executeUpdate("UPDATE EMAIL_USER SET source_pw ='" + pw +"', total_eml_count ="+nTotalCount+ " where source_email ='"+email+"'");
+
+            } else {
+                 statement.executeUpdate("INSERT INTO EMAIL_USER (source_email,source_pw,total_eml_count) values ('" + email + "','" + pw+ "',"+ nTotalCount+ ")");
             }
 
 
