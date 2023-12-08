@@ -1,17 +1,22 @@
 package com.funnysalt.bean;
 
 
+import com.funnysalt.service.ImapOneUserMigration;
 import com.funnysalt.util.AES256;
+import com.funnysalt.util.ActiveTasksThreadPool;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
 import java.sql.*;
 import java.util.HashMap;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.TimeUnit;
 
 //키 값은 이메일 주소
 @Component
 public class UserInfoFile {
 
+    ActiveTasksThreadPool activeTasksThreadPool;
     private HashMap<String,String> mapSourceUserInfo = new HashMap<String,String>();
     private HashMap<String,String> mapTargetUserInfo = new HashMap<String,String>();
     File userInfoFile;
@@ -105,6 +110,43 @@ public class UserInfoFile {
     }
 
     public void read() {
+
+        // pool 5개
+        activeTasksThreadPool = new ActiveTasksThreadPool(5,5,10, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
+
+        Connection con = null ;
+        Statement statement = null;
+        ResultSet resultSet = null;
+
+        try {
+//            pw = new AES256().encrypt(pw);
+//            String value = email + " " + pw + " 0 0"; // id  , pw , 전체 메일 수 , 다운로드한 메일 수 , 업로드한 메일 수
+
+            con = DriverManager.getConnection("jdbc:derby:/home/imapMigration;create=true");
+            con.setAutoCommit(true);
+
+
+            // statement 객체 생성
+            statement = con.createStatement();
+            // RDB와 통신
+            resultSet = statement.executeQuery("SELECT * FROM EMAIL_USER");
+
+            while (resultSet.next()) {
+                String strSourceEmail = resultSet.getString(1);
+                String strSourcePW = resultSet.getString(2);
+                strSourcePW = new AES256().decrypt(strSourcePW);
+
+                ImapOneUserMigration imapOneUserMigration = new ImapOneUserMigration(strSourceEmail);
+
+            }
+
+        } catch (Exception se) {
+            se.printStackTrace();
+        }finally {
+            if(resultSet != null){try{resultSet.close() ;} catch(SQLException se){}	}
+            if(statement != null){try{statement.close() ;} catch(SQLException se){}}
+            if(con != null){try{con.close() ;} catch(SQLException se){}}
+        }
     }
 
 //    public synchronized void addUserInfo(String email,String pw){

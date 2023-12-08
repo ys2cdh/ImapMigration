@@ -3,9 +3,7 @@ package com.funnysalt.service;
 import util.StreamUtil;
 
 import javax.net.ssl.*;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -17,11 +15,14 @@ import java.util.regex.Pattern;
 
 public class ImapWork {
 
+	private static Pattern cmdPatternFETCH = Pattern.compile("BODY[\\s\\[\\]\\{]*([\\p{Digit}]*)", Pattern.CASE_INSENSITIVE);
     private Socket m_Socket;
 	//imap command index
 	private int nCommondIndex;
 	private OutputStream out = null;
 	private InputStream in = null;
+
+	private String mBoxName;
 
     public boolean connect(String strServer, int nPort, boolean bSSL) {
 
@@ -217,6 +218,274 @@ public class ImapWork {
 			}
 		}
 		return 1;
+	}
+
+	public boolean select(String mBoxName) throws Exception{
+		StreamUtil.writeString(out, nCommondIndex + " SELECT \"" + mBoxName + "\"\r\n");
+
+		String strTemp = "";
+		while (true)
+		{
+			strTemp = StreamUtil.readLineString(in);
+
+			if (strTemp.startsWith("*"))
+			{
+
+			}
+			else if (nCommondIndex == Integer.parseInt(strTemp.split(" ")[0]))
+			{
+				nCommondIndex++;
+				if (-1 >= strTemp.toUpperCase().indexOf("OK"))
+				{
+					return false;
+				}
+				break;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		this.mBoxName = mBoxName;
+		return true;
+	}
+	//테스트용 코드
+	private ArrayList<Long> getAllUIDs() throws Exception{
+		StreamUtil.writeString(out, nCommondIndex + " UID FETCH 1:* (UID FLAGS)\r\n");
+
+		String strTemp = "";
+		ArrayList<Long> aryUIDs = null;
+		aryUIDs = new ArrayList<Long>();
+		while (true)
+		{
+			strTemp = StreamUtil.readLineString(in);
+
+			if (strTemp.startsWith("*"))
+			{
+				String[] strUIDS = strTemp.split(" ");
+				aryUIDs.add(Long.parseLong(strUIDS[4].replace("\r\n", "").trim()));
+
+			}
+			else if (nCommondIndex == Integer.parseInt(strTemp.split(" ")[0]))
+			{
+				nCommondIndex++;
+				if (-1 >= strTemp.toUpperCase().indexOf("OK"))
+				{
+					return aryUIDs;
+				}
+				break;
+			}
+			else
+			{
+				return aryUIDs;
+			}
+		}
+		System.out.println(aryUIDs);
+		return aryUIDs;
+
+	}
+
+	public ArrayList<Long>  getAfterFewTimes(long startUID) throws Exception{
+		StreamUtil.writeString(out, nCommondIndex + " UID FETCH "+ startUID+":* (UID FLAGS)\r\n");
+
+		String strTemp = "";
+		ArrayList<Long> aryUIDs = null;
+		while (true)
+		{
+			strTemp = StreamUtil.readLineString(in);
+
+			if (strTemp.startsWith("*"))
+			{
+				String[] strUIDS = strTemp.split(" ");
+				aryUIDs = new ArrayList<Long>();
+				for (int i = 2; i < strUIDS.length; i++)
+				{
+					aryUIDs.add(Long.parseLong(strUIDS[i].replace("\r\n", "")));
+				}
+			}
+			else if (nCommondIndex == Integer.parseInt(strTemp.split(" ")[0]))
+			{
+				nCommondIndex++;
+				if (-1 >= strTemp.toUpperCase().indexOf("OK"))
+				{
+					return aryUIDs;
+				}
+				break;
+			}
+			else
+			{
+				return aryUIDs;
+			}
+		}
+		System.out.println(aryUIDs);
+		return aryUIDs;
+	}
+
+	public boolean downloadEml(String strDownloadPath,long uid) throws Exception {
+		FileOutputStream fileout = null;
+		File file = null;
+		try {
+			StreamUtil.writeString(out, nCommondIndex + " UID FETCH " + uid + " (FLAGS UID BODY.PEEK[])\r\n");
+//			addLogString(m_nCommondIndex + " UID FETCH " + nExternalUID + " (FLAGS UID BODY.PEEK[])\r\n");
+			String strTemp = "";
+			String strTempEmail = strDownloadPath + "/" + nCommondIndex + ".eml";
+			file = new File(strTempEmail);
+
+			byte[] buf = new byte[81920];
+			boolean bSeen = false;
+
+			long nSize = 0;
+			fileout = new FileOutputStream(file);
+			while (true) {
+				if (0 == nSize) {
+					strTemp = StreamUtil.readLineString(in);
+				} else {
+					long nReadSize = (buf.length > nSize) ? nSize : buf.length;
+					int nReadSize1 = in.read(buf, 0, (int) nReadSize);
+					fileout.write(buf, 0, (int) nReadSize1);
+					nSize -= nReadSize1;
+					// System.out.println(nSize + " Read Size : " + nReadSize +
+					// " Read1 Size " + nReadSize1);
+					continue;
+				}
+//				addLogString(strTemp);
+				String[] strCommands = strTemp.split(" ");
+				Matcher m = cmdPatternFETCH.matcher(strTemp);
+				if (2 <= strCommands.length && 0 == String.valueOf(nCommondIndex).compareTo(strCommands[0]) && (strCommands[1].equalsIgnoreCase("OK") || strCommands[1].equalsIgnoreCase("NO") || strCommands[1].equalsIgnoreCase("BAD"))) {
+					nCommondIndex++;
+					//하나의 파일이 다운로드가 완료된 후
+					if (strCommands[1].equalsIgnoreCase("OK") && 0 < file.length()) {
+
+
+					}
+
+					break;
+				} else if (strTemp.startsWith("*")) {
+					bSeen = -1 < strTemp.toUpperCase().indexOf("\\SEEN");
+					if (true == m.find()) {
+						nSize = Long.parseLong(m.group(1));
+					}
+					// System.out.println(nSize);
+				}
+
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		} finally {
+			if (null != fileout) {
+				fileout.close();
+			}
+		}
+		return true;
+	}
+
+	//테스트용 코드
+	private boolean downloadEml(String strDownloadPath,ArrayList<Long> aryUIDs) throws Exception {
+
+		for ( Long uid : aryUIDs ) {
+			downloadEml(strDownloadPath,uid);
+		}
+
+		return true;
+	}
+
+	public void uploadEml(File f) throws Exception{
+
+		FileInputStream fileIn = null;
+
+		try {
+			StreamUtil.writeString(out, nCommondIndex + " APPEND \"" + mBoxName + "\" (\\Seen) {" + f.length() + "}\r\n");
+
+			String strTemp = StreamUtil.readLineString(in);
+
+			if (!strTemp.toLowerCase().startsWith("+")){
+				return;
+			}
+
+			byte[] buf = new byte[81920];
+			boolean bSeen = false;
+
+			int nReadSize = 0;
+			fileIn = new FileInputStream(f);
+			while (0 < (nReadSize = fileIn.read(buf)) ) {
+				out.write(buf,0,nReadSize);
+			}
+			StreamUtil.writeString(out,"\r\n");
+
+			strTemp = StreamUtil.readLineString(in);
+			if (nCommondIndex == Integer.parseInt(strTemp.split(" ")[0]))
+			{
+				nCommondIndex++;
+				fileIn.close();
+				fileIn=null;
+				f.renameTo(new File(f.getAbsolutePath()+"cfg"));
+//					if (-1 >= strTemp.toUpperCase().indexOf("OK"))
+//					{
+//						return aryUIDs;
+//					}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (null != fileIn) {
+				fileIn.close();
+			}
+		}
+	}
+
+	public void uploadEml(String strUploadPath) throws Exception {
+
+		File[] files = new File(strUploadPath).listFiles(new FileFilter() {
+			public boolean accept(File f)
+			{
+				return f.getName().endsWith("eml");
+			}
+		});
+		for ( File f : files) {
+
+
+			FileInputStream fileIn = null;
+
+			try {
+				StreamUtil.writeString(out, nCommondIndex + " APPEND \"" + mBoxName + "\" (\\Seen) {" + f.length() + "}\r\n");
+
+				String strTemp = StreamUtil.readLineString(in);
+
+				if (!strTemp.toLowerCase().startsWith("+")){
+					continue;
+				}
+
+				byte[] buf = new byte[81920];
+				boolean bSeen = false;
+
+				int nReadSize = 0;
+				fileIn = new FileInputStream(f);
+				while (0 < (nReadSize = fileIn.read(buf)) ) {
+					out.write(buf,0,nReadSize);
+				}
+				StreamUtil.writeString(out,"\r\n");
+
+				strTemp = StreamUtil.readLineString(in);
+				if (nCommondIndex == Integer.parseInt(strTemp.split(" ")[0]))
+				{
+					nCommondIndex++;
+					fileIn.close();
+					fileIn=null;
+					f.renameTo(new File(f.getAbsolutePath()+"cfg"));
+//					if (-1 >= strTemp.toUpperCase().indexOf("OK"))
+//					{
+//						return aryUIDs;
+//					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				if (null != fileIn) {
+					fileIn.close();
+				}
+			}
+		}
 	}
 
 

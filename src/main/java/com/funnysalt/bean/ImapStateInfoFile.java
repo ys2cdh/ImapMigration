@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-@Component
+@Component(value="ImapStateInfoFile")
 public class ImapStateInfoFile {
 
     private String filePath;
