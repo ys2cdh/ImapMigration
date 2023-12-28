@@ -1,16 +1,89 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON 데이터를 표로 표시하기</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+    </style>
 </head>
 <body>
-<p>진행 중</p>
-<p th:text="${ing}"></p>
-<hr width=100% color=”block” noshade />
-<p>완료리스트</p>
-<ul th:each="complete : ${completes}">
-    <li th:text="${complete}"></li>
-</ul>
+
+<table id="data-table">
+    <thead>
+    <tr>
+        <th>Total EML Count</th>
+        <th>Source Email</th>
+        <th>Download Mbox Name</th>
+        <th>Download EML Count</th>
+        <th>Target Email</th>
+        <th>Up Mbox Name</th>
+        <th>Up EML Count</th>
+        <th>Migration State</th>
+    </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+    // 데이터를 표에 표시하는 함수
+    function displayDataInTable(data) {
+        var tableBody = document.querySelector('#data-table tbody');
+
+        // 기존 내용 지우기
+        tableBody.innerHTML = '';
+
+        // 데이터를 표에 추가
+        data.forEach(function (item) {
+            var row = document.createElement('tr');
+
+            // 각 필드를 셀로 추가
+            row.innerHTML = `
+                <td>${item.total_eml_count}</td>
+                <td>${item.source_email}</td>
+                <td>${item.download_mbox_name}</td>
+                <td>${item.download_eml_count}</td>
+                <td>${item.target_email}</td>
+                <td>${item.up_mbox_name}</td>
+                <td>${item.up_eml_count}</td>
+                <td>${item.migration_state}</td>
+            `;
+
+            // 행을 표에 추가
+            tableBody.appendChild(row);
+        });
+    }
+
+    // 페이지 로드 시 데이터 표시
+    window.onload = function () {
+        fetch('/getAllImapState', {
+            method: "GET",
+            mode: "cors",
+            cache: "no-cache",
+            credentials: "same-origin",
+            redirect: "follow",
+            referrerPolicy: "no-referrer"
+        }).then(response =>
+            response.json().then(data => ({
+                data: data,
+                status: response.status
+            }))
+        ).then(res => {
+            displayDataInTable(res.data);
+        });
+    };
+</script>
+
 </body>
 </html>

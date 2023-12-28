@@ -289,7 +289,7 @@ public class ImapWork {
 		StreamUtil.writeString(out, nCommondIndex + " UID FETCH "+ startUID+":* (UID FLAGS)\r\n");
 
 		String strTemp = "";
-		ArrayList<Long> aryUIDs = null;
+		ArrayList<Long> aryUIDs = new ArrayList<Long>();
 		while (true)
 		{
 			strTemp = StreamUtil.readLineString(in);
@@ -297,11 +297,13 @@ public class ImapWork {
 			if (strTemp.startsWith("*"))
 			{
 				String[] strUIDS = strTemp.split(" ");
-				aryUIDs = new ArrayList<Long>();
-				for (int i = 2; i < strUIDS.length; i++)
-				{
-					aryUIDs.add(Long.parseLong(strUIDS[i].replace("\r\n", "")));
+				if (4 < strUIDS.length) {
+					aryUIDs.add(Long.parseLong(strUIDS[4].replace("\r\n", "")));
 				}
+//				for (int i = 2; i < strUIDS.length; i++)
+//				{
+//					aryUIDs.add(Long.parseLong(strUIDS[i].replace("\r\n", "")));
+//				}
 			}
 			else if (nCommondIndex == Integer.parseInt(strTemp.split(" ")[0]))
 			{

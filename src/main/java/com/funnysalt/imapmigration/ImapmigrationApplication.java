@@ -73,7 +73,8 @@ public class ImapmigrationApplication {
 				"\tdownload_mbox_name varchar(255)," +// COMMENT '다운로드 중 메일함',\n" +
 				"\tdownload_muid BIGINT," +// COMMENT '마지막 다운로드',\n" +
 				"\tup_mbox_name varchar(255)," +// COMMENT '업로드 중 메일함',\n" +
-				"\tup_muid BIGINT" +// COMMENT '마지막 업로드',\n" +
+				"\tup_muid BIGINT," +// COMMENT '마지막 업로드',\n" +
+				"\tmigration_state INTEGER" +// COMMENT '0 대기중 , 1 진행 중 , 2 완료',\n" +
 				")\n";
 		return strSql;
 	}

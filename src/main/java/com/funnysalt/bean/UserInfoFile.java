@@ -59,7 +59,7 @@ public class UserInfoFile {
                 statement.executeUpdate("UPDATE EMAIL_USER SET source_pw ='" + pw +"', total_eml_count ="+nTotalCount+ " where source_email ='"+email+"'");
 
             } else {
-                 statement.executeUpdate("INSERT INTO EMAIL_USER (source_email,source_pw,total_eml_count) values ('" + email + "','" + pw+ "',"+ nTotalCount+ ")");
+                 statement.executeUpdate("INSERT INTO EMAIL_USER (source_email,source_pw,total_eml_count,download_cml_count,up_eml_count,download_muid,migration_state) values ('" + email + "','" + pw+ "',"+ nTotalCount+ ",0,0,1,0)");
             }
 
 
@@ -96,10 +96,13 @@ public class UserInfoFile {
             // statement 객체 생성
             statement = con.createStatement();
             // RDB와 통신
-            statement.executeUpdate("UPDATE EMAIL_USER SET target_email = '"+email+"', target_pw = '"+pw+"' where source_email='"+sourceEmail+"'");
+            statement.executeUpdate("UPDATE EMAIL_USER SET target_email = '"+email+"', target_pw = '"+pw+"', migration_state=1  where source_email='"+sourceEmail+"'");
 
 
             mapTargetUserInfo.put(email,value);
+
+            ImapOneUserMigration imapOneUserMigration = new ImapOneUserMigration(sourceEmail);
+            activeTasksThreadPool.execute(imapOneUserMigration);
         } catch (Exception se) {
             se.printStackTrace();
         }finally {
@@ -129,14 +132,17 @@ public class UserInfoFile {
             // statement 객체 생성
             statement = con.createStatement();
             // RDB와 통신
-            resultSet = statement.executeQuery("SELECT * FROM EMAIL_USER");
+            resultSet = statement.executeQuery("SELECT * FROM EMAIL_USER WHERE migration_state !=2");
 
             while (resultSet.next()) {
                 String strSourceEmail = resultSet.getString(1);
                 String strSourcePW = resultSet.getString(2);
                 strSourcePW = new AES256().decrypt(strSourcePW);
 
+                activeTasksThreadPool.getActiveCount();
+
                 ImapOneUserMigration imapOneUserMigration = new ImapOneUserMigration(strSourceEmail);
+                activeTasksThreadPool.execute(imapOneUserMigration);
 
             }
 

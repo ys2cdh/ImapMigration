@@ -48,6 +48,10 @@ public class ImapMBoxEmlDownlod implements Runnable {
             new File(imapStateInfoFile.getSavePath()+"/"+sourceEmail+"/"+mBoxName).mkdirs();
             ArrayList<Long> aryUIDs = imapWork.getAfterFewTimes(startUID);
 
+            if (null == aryUIDs){
+                return;
+            }
+
             for(long uid : aryUIDs){
 
                 // 업로드 했는지 체크

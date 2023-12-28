@@ -1,13 +1,12 @@
 package com.funnysalt.bean;
 
-import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
+
 
 @Component(value="ImapStateInfoFile")
 public class ImapStateInfoFile {
@@ -19,7 +18,8 @@ public class ImapStateInfoFile {
 
     private Map<String,String> mapImapState = new HashMap<String,String>();
 
-    public void init(String strFilePath)   {
+    public void
+    init(String strFilePath)   {
         filePath = strFilePath;
         try {
             load();

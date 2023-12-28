@@ -67,10 +67,37 @@ public class ImapOneUserMigration implements Runnable{
                 imapMBoxEmlUpload.run();
             }
 
+            updateMigrationComplete();
 
 
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private void updateMigrationComplete() {
+        Connection con = null ;
+        Statement statement = null;
+        ResultSet resultSet = null;
+
+        try {
+
+            con = DriverManager.getConnection("jdbc:derby:/home/imapMigration;create=true");
+            con.setAutoCommit(true);
+
+
+            // statement 객체 생성
+            statement = con.createStatement();
+            // RDB와 통신
+            statement.executeUpdate("UPDATE EMAIL_USER SET migration_state=2  where source_email='"+sourceEmail+"'");
+
+;
+        } catch (Exception se) {
+            se.printStackTrace();
+        }finally {
+            if(resultSet != null){try{resultSet.close() ;} catch(SQLException se){}	}
+            if(statement != null){try{statement.close() ;} catch(SQLException se){}}
+            if(con != null){try{con.close() ;} catch(SQLException se){}}
         }
     }
 

@@ -1,16 +1,14 @@
 package com.funnysalt.controller;
 
 import com.funnysalt.bean.ImapStateInfoFile;
-import com.funnysalt.bean.UserInfoFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Properties;
-
+import com.funnysalt.service.ImapMaigrationState;
 @Controller
 public class imapState {
 
@@ -21,6 +19,8 @@ public class imapState {
     String imapState(Model model)
     {
         model.addAttribute("ing","");
+
+
 //        Properties properties = imapStateInfoFile.getProp();
 //        if (null != properties && properties.containsKey("ing...")){
 //            model.addAttribute("ing",properties.get("ing..."));
@@ -40,5 +40,12 @@ public class imapState {
 //        model.addAttribute("completes",aryList);
 
         return "imapState";
+    }
+
+    @ResponseBody
+    @GetMapping("/getAllImapState")
+    String getAllImapState(){
+        ImapMaigrationState imapMaigrationState =new ImapMaigrationState();
+        return imapMaigrationState.getAllUserStateList().toJSONString();
     }
 }
